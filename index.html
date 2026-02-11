@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إبداع بلا إدمان - وسام غازي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root { --primary: #facc15; --bg-dark: #080808; --accent-red: #ef4444; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Cairo', sans-serif; background-color: var(--bg-dark); color: white; cursor: crosshair; }
+        #canvas-smoke { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; opacity: 0.6; }
+        .viewport { width: 100%; height: 100%; display: flex; transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1); }
+        .slide { width: 100vw; height: 100vh; flex-shrink: 0; display: flex; justify-content: center; align-items: center; position: relative; padding: 40px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border: 1px solid rgba(250, 204, 21, 0.2); border-radius: 40px; padding: 4rem; max-width: 1100px; width: 90%; z-index: 10; box-shadow: 0 40px 100px rgba(0,0,0,0.8); position: relative; }
+        .main-title { font-weight: 900; font-size: clamp(3rem, 8vw, 7rem); line-height: 1; background: linear-gradient(180deg, #fff 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .navigation { position: fixed; bottom: 40px; right: 40px; z-index: 100; display: flex; gap: 15px; }
+        .nav-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); display: flex; justify-content: center; align-items: center; color: var(--primary); font-weight: bold; cursor: pointer; transition: 0.4s; background: rgba(0,0,0,0.5); }
+        .nav-circle:hover { background: var(--primary); color: black; transform: scale(1.1); }
+        .evidence-card { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--primary); z-index: 200; transition: width 0.5s ease; }
+        
+        /* علامة القراءة (Highlight) */
+        .reading-now {
+            color: var(--primary) !important;
+            background: rgba(250, 204, 21, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            transform: scale(1.02);
+            display: inline-block;
+        }
+
+        /* زر التحكم بالصوت */
+        .audio-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid var(--primary);
+        }
+
+        /* تذييل باسم الطالب */
+        .student-credit {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            font-size: 14px;
+            opacity: 0.8;
+            color: var(--primary);
+            border-left: 2px solid var(--primary);
+            padding-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="p-bar" style="width: 25%;"></div>
+    <canvas id="canvas-smoke"></canvas>
+    
+    <div class="audio-toggle" onclick="toggleAudio()" id="audioBtn">
+        <span id="speakerIcon">🔊</span>
+    </div>
+
+    <!-- تذييل اسم الطالب وسام غازي -->
+    <div class="student-credit">
+        تم إنشاء المشروع بواسطة الطالب: وسام غازي
+    </div>
+
+    <div class="viewport" id="viewport">
+        
+        <!-- شريحة 1 -->
+        <section class="slide" id="slide-0">
+            <div class="glass-panel text-center">
+                <div class="inline-block border-2 border-yellow-400 px-6 py-1 rounded-full mb-6 font-bold tracking-widest text-xs uppercase text-yellow-400">مهمة أدائية | مشروع الإبداع</div>
+                <h1 class="main-title speech-content">الإبــــــــــداع</h1>
+                <div class="text-9xl mb-6">🚭</div>
+                <p class="text-3xl font-light mb-8 leading-relaxed opacity-90 speech-content">
+                    عرض توعوي تفاعلي يسلط الضوء على أضرار الإدمان وجناية التدخين على النفس.
+                </p>
+                <div class="flex justify-center gap-6 mt-10">
+                    <div class="text-right border-r-2 border-yellow-400 pr-4">
+                        <span class="block text-sm opacity-50 uppercase">المستهدفون</span>
+                        <span class="font-bold speech-content">كافة فئات المجتمع</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-sm opacity-50 uppercase">الرسالة</span>
+                        <span class="font-bold speech-content">وعيٌ يحمي الأجيال</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- شريحة 2 -->
+        <section class="slide" id="slide-1">
+            <div class="glass-panel">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-5xl font-black mb-8 border-r-8 border-yellow-400 pr-6 speech-content">الدليل العلمي</h2>
+                        <p class="text-xl opacity-70 mb-8 speech-content">العلم لا يحابي أحداً؛ إليك ما تفعله السيجارة الواحدة بكيانك البيولوجي</p>
+                        <div class="space-y-4">
+                            <div class="evidence-card speech-content">دخان التبغ يحتوي على أكثر من سبعين مادة مسرطنة معترف بها دولياً.</div>
+                            <div class="evidence-card speech-content">غاز أول أكسيد الكربون يطرد الأكسجين من دمك، مما يضعف كل خلية في جسدك.</div>
+                        </div>
+                    </div>
+                    <div class="bg-red-500/10 p-8 rounded-3xl border border-red-500/20">
+                        <h3 class="text-3xl font-bold mb-4 text-red-500 speech-content">حقيقة صادمة</h3>
+                        <p class="text-lg speech-content">تبغ السجائر يقتل شخصاً كل ست ثوانٍ حول العالم.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- شريحة 3 -->
+        <section class="slide" id="slide-2">
+            <div class="glass-panel">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-black highlight speech-content">الدليل الاجتماعي والمادي</h2>
+                    <p class="mt-4 opacity-60 speech-content">أنت لا تحرق التبغ فقط، أنت تحرق علاقاتك ومستقبلك المالي</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="evidence-card p-6 speech-content">التدخين القسري يجعل عائلتك تتنفس السموم رغماً عنها.</div>
+                    <div class="evidence-card p-6 speech-content">ما ينفقه المدخن في عشر سنوات يكفي لبناء مستقبل تعليمي فاخر.</div>
+                    <div class="evidence-card p-6 speech-content">الرائحة الكريهة وتغير لون الأسنان يضعف القبول الاجتماعي.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- شريحة 4 -->
+        <section class="slide" id="slide-3">
+            <div class="glass-panel text-center">
+                <h2 class="text-7xl font-black mb-8 speech-content">كفى.. اختر الحياة</h2>
+                <p class="text-2xl opacity-80 mb-12 max-w-2xl mx-auto leading-relaxed speech-content">
+                    الإقلاع عن التدخين هو إعلان استقلال لروحك وجسدك. ابدأ اليوم، فغداً يبدأ بقرار الآن.
+                </p>
+                <div class="mt-10 opacity-30 text-sm">#لا_للإدمان | #مشروع_الإبداع | إعداد: وسام غازي</div>
+            </div>
+        </section>
+    </div>
+
+    <div class="navigation">
+        <div class="nav-circle" onclick="prev()">→</div>
+        <div class="nav-circle" onclick="next()">←</div>
+    </div>
+
+    <script>
+        let idx = 0;
+        const total = 4;
+        const view = document.getElementById('viewport');
+        const pBar = document.getElementById('p-bar');
+        let isAudioEnabled = true;
+        const synth = window.speechSynthesis;
+        let currentUtterance = null;
+
+        function update() {
+            view.style.transform = `translateX(${idx * 100}vw)`;
+            pBar.style.width = `${((idx + 1) / total) * 100}%`;
+            stopSpeech();
+            setTimeout(() => readSlide(idx), 1000);
+        }
+
+        function next() { if(idx < total-1) { idx++; update(); } }
+        function prev() { if(idx > 0) { idx--; update(); } }
+
+        function readSlide(slideIdx) {
+            if (!isAudioEnabled) return;
+            const slide = document.getElementById(`slide-${slideIdx}`);
+            const elements = slide.querySelectorAll('.speech-content');
+            readElementsSequentially(elements, 0);
+        }
+
+        function readElementsSequentially(elements, elementIdx) {
+            if (elementIdx >= elements.length || !isAudioEnabled) return;
+            const el = elements[elementIdx];
+            el.classList.add('reading-now');
+            const utterance = new SpeechSynthesisUtterance(el.innerText);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.9;
+            utterance.onend = () => {
+                el.classList.remove('reading-now');
+                readElementsSequentially(elements, elementIdx + 1);
+            };
+            currentUtterance = utterance;
+            synth.speak(utterance);
+        }
+
+        function stopSpeech() {
+            synth.cancel();
+            document.querySelectorAll('.speech-content').forEach(el => el.classList.remove('reading-now'));
+        }
+
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            document.getElementById('speakerIcon').innerText = isAudioEnabled ? '🔊' : '🔇';
+            if (!isAudioEnabled) stopSpeech(); else readSlide(idx);
+        }
+
+        const canvas = document.getElementById('canvas-smoke');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.size = Math.random() * 80 + 40;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * -1.5 - 0.5;
+                this.opacity = 1;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.size > 0.5) this.size -= 0.5; this.opacity -= 0.005; }
+            draw() { ctx.fillStyle = `rgba(200, 200, 200, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (particles.length < 50) particles.push(new Particle(Math.random()*canvas.width, canvas.height + 100));
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                if (particles[i].opacity <= 0) { particles.splice(i, 1); i--; }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowLeft') next();
+            if(e.key === 'ArrowRight') prev();
+        });
+
+        window.onclick = () => { if(synth.speaking === false && idx === 0) readSlide(0); };
+    </script>
+</body>
+</html>
+
+  
